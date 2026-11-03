@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 4 - 1-Year University Budget Spreadsheet</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --error: #dc2626;
+            --accent: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        h1 { margin: 0 0 8px 0; color: #0f172a; font-size: 1.8rem; }
+        p { margin: 0; color: #64748b; }
+
+        .instructions {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 12px 16px;
+            margin-top: 16px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .section-card h2 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: #0f172a;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 12px;
+        }
+
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        .budget-table th, .budget-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .budget-table th {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+
+        .summary-card {
+            background: #0f172a;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .summary-stat {
+            text-align: center;
+        }
+
+        .summary-stat .val {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .status-positive { color: #4ade80; }
+        .status-negative { color: #f87171; }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-success:hover { background: #15803d; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Task 4: 1-Year University Budget Spreadsheet</h1>
+        <p>Grade 11 Life Skills — Money Management & Financial Planning (2028)</p>
+        <div class="instructions">
+            <strong>Task Instructions:</strong> Click the green button below to download your official 2-tab budget template. Look at your Task 3 screenshot and enter your researched costs into <strong>Tab 1 (Student Worksheet)</strong>. You can switch to <strong>Tab 2 (Worked Example)</strong> anytime if you need help balancing your budget!
+        </div>
+    </header>
+
+    <!-- LIVE INTERACTIVE SIMULATOR & DIRECT DOWNLOAD -->
+    <div class="btn-group">
+        <a href="One_Year_University_Budget_Template.xlsx" download="One_Year_University_Budget_Template.xlsx" class="btn-success" style="text-decoration: none; display: inline-block;">
+            💾 Download Student Budget Template (.xlsx)
+        </a>
+    </div>
+
+    <!-- LIVE SUMMARY BANNER -->
+    <div class="summary-card">
+        <div class="summary-stat">
+            <div>Total Annual Income</div>
+            <div class="val status-positive" id="total-income-display">€0</div>
+        </div>
+        <div class="summary-stat">
+            <div>Total Annual Expenses</div>
+            <div class="val status-negative" id="total-expense-display">€0</div>
+        </div>
+        <div class="summary-stat">
+            <div>Net Annual Position</div>
+            <div class="val" id="net-position-display">€0</div>
+        </div>
+    </div>
+
+    <!-- SECTION 1: ANNUAL INCOME & FUNDING -->
+    <div class="section-card">
+        <h2>1. Annual Income & Funding Sources</h2>
+        <p style="color:#64748b; font-size:0.85rem;">Enter your expected funding sources for 1 full academic year (12 months):</p>
+        
+        <table class="budget-table">
+            <thead>
+                <tr>
+                    <th>Income Source</th>
+                    <th>Frequency</th>
+                    <th>Amount (€ / $)</th>
+                    <th>Annual Total (€ / $)</th>
+                </tr>
+            </thead>
+            <tbody id="income-body">
+            </tbody>
+        </table>
+        <button style="margin-top:12px; background:#e2e8f0; color:#334155;" onclick="addIncomeRow()">+ Add Income Line Item</button>
+    </div>
+
+    <!-- SECTION 2: ANNUAL EXPENSES -->
+    <div class="section-card">
+        <h2>2. Annual Expenditure & Costs</h2>
+        <p style="color:#64748b; font-size:0.85rem;">Enter your monthly or one-off expense amounts below from your Task 3 research. The system automatically calculates 1-Year projections:</p>
+
+        <table class="budget-table">
+            <thead>
+                <tr>
+                    <th style="width:30%;">Expense Line Item</th>
+                    <th style="width:15%;">Cost Type</th>
+                    <th style="width:15%;">Frequency</th>
+                    <th style="width:20%;">Payment Amount (€)</th>
+                    <th style="width:20%;">Annual Total (€)</th>
+                </tr>
+            </thead>
+            <tbody id="expense-body">
+            </tbody>
+        </table>
+        <button style="margin-top:12px; background:#e2e8f0; color:#334155;" onclick="addExpenseRow()">+ Add Custom Expense Item</button>
+    </div>
+</div>
+
+<script>
+    const defaultIncome = [
+        { name: "Parental Allowance / Support", freq: "Monthly", amount: 600 },
+        { name: "Part-Time Job / Student Work", freq: "Monthly", amount: 450 },
+        { name: "Student Loan / BAföG / Grant", freq: "Monthly", amount: 0 },
+        { name: "Personal Savings Contribution", freq: "One-off", amount: 1000 }
+    ];
+
+    const defaultExpenses = [
+        { name: "University Fees & Tuition", type: "Ongoing", freq: "Yearly", amount: 300 },
+        { name: "Rent (Accommodation)", type: "Ongoing", freq: "Monthly", amount: 550 },
+        { name: "Rental Deposit (Kaution)", type: "One-off", freq: "One-off", amount: 1100 },
+        { name: "Groceries & Food", type: "Ongoing", freq: "Monthly", amount: 250 },
+        { name: "Utilities (Electricity, Water, Gas)", type: "Ongoing", freq: "Monthly", amount: 90 },
+        { name: "Internet & Mobile Phone", type: "Ongoing", freq: "Monthly", amount: 35 },
+        { name: "Public Transportation Pass", type: "Ongoing", freq: "Monthly", amount: 49 },
+        { name: "Health & Medical Insurance", type: "Ongoing", freq: "Monthly", amount: 120 },
+        { name: "Broadcasting Fee (GEZ) & Contents Insurance", type: "Ongoing", freq: "Monthly", amount: 25 },
+        { name: "Furniture & Setup", type: "One-off", freq: "One-off", amount: 400 },
+        { name: "Personal & Entertainment", type: "Ongoing", freq: "Monthly", amount: 150 }
+    ];
+
+    let incomeList = [...defaultIncome];
+    let expenseList = [...defaultExpenses];
+
+    function renderIncome() {
+        const tbody = document.getElementById('income-body');
+        tbody.innerHTML = '';
+
+        incomeList.forEach((item, index) => {
+            const annual = item.freq === 'Monthly' ? item.amount * 12 : item.amount;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" value="${item.name}" onchange="incomeList[${index}].name = this.value; calculateTotals();"></td>
+                <td>
+                    <select onchange="incomeList[${index}].freq = this.value; calculateTotals();">
+                        <option value="Monthly" ${item.freq === 'Monthly' ? 'selected' : ''}>Monthly (12x)</option>
+                        <option value="One-off" ${item.freq === 'One-off' ? 'selected' : ''}>One-off / Annual</option>
+                    </select>
+                </td>
+                <td><input type="number" value="${item.amount}" onchange="incomeList[${index}].amount = parseFloat(this.value)||0; calculateTotals();"></td>
+                <td><strong>€${annual.toLocaleString()}</strong></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderExpenses() {
+        const tbody = document.getElementById('expense-body');
+        tbody.innerHTML = '';
+
+        expenseList.forEach((item, index) => {
+            const annual = item.freq === 'Monthly' ? item.amount * 12 : item.amount;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" value="${item.name}" onchange="expenseList[${index}].name = this.value; calculateTotals();"></td>
+                <td>
+                    <select onchange="expenseList[${index}].type = this.value; calculateTotals();">
+                        <option value="Ongoing" ${item.type === 'Ongoing' ? 'selected' : ''}>Ongoing</option>
+                        <option value="One-off" ${item.type === 'One-off' ? 'selected' : ''}>One-off</option>
+                    </select>
+                </td>
+                <td>
+                    <select onchange="expenseList[${index}].freq = this.value; calculateTotals();">
+                        <option value="Monthly" ${item.freq === 'Monthly' ? 'selected' : ''}>Monthly (12x)</option>
+                        <option value="One-off" ${item.freq === 'One-off' ? 'selected' : ''}>One-off</option>
+                        <option value="Yearly" ${item.freq === 'Yearly' ? 'selected' : ''}>Yearly (1x)</option>
+                    </select>
+                </td>
+                <td><input type="number" value="${item.amount}" onchange="expenseList[${index}].amount = parseFloat(this.value)||0; calculateTotals();"></td>
+                <td><strong>€${annual.toLocaleString()}</strong></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function calculateTotals() {
+        let totalIncome = 0;
+        incomeList.forEach(i => {
+            totalIncome += i.freq === 'Monthly' ? i.amount * 12 : i.amount;
+        });
+
+        let totalExpenses = 0;
+        expenseList.forEach(e => {
+            totalExpenses += e.freq === 'Monthly' ? e.amount * 12 : e.amount;
+        });
+
+        const net = totalIncome - totalExpenses;
+
+        document.getElementById('total-income-display').textContent = `€${totalIncome.toLocaleString()}`;
+        document.getElementById('total-expense-display').textContent = `€${totalExpenses.toLocaleString()}`;
+
+        const netDisplay = document.getElementById('net-position-display');
+        netDisplay.textContent = `€${net.toLocaleString()}`;
+        netDisplay.className = net >= 0 ? 'val status-positive' : 'val status-negative';
+
+        renderIncome();
+        renderExpenses();
+    }
+
+    function addIncomeRow() {
+        incomeList.push({ name: "Other Funding Source", freq: "Monthly", amount: 0 });
+        calculateTotals();
+    }
+
+    function addExpenseRow() {
+        expenseList.push({ name: "Other Expense", type: "Ongoing", freq: "Monthly", amount: 0 });
+        calculateTotals();
+    }
+
+    window.onload = calculateTotals;
+</script>
+</body>
+</html>
